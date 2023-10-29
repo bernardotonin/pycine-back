@@ -9,7 +9,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     is_active = Column(Boolean, default=True)
     password = Column(String)
-    favorites = relationship('Favorite', backref='user')
+    favorites = relationship('Favorite', backref='user', lazy='subquery')
     
 
 class Favorite(Base):
