@@ -3,9 +3,35 @@ from services import UserService, FavoriteService
 from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserListOutput
 from typing import List
 
+from tmdb import get_json
+
 
 user_router = APIRouter(prefix='/user')
 movie_router = APIRouter(prefix='/movie')
+
+# ===========================================
+#              Movie Features
+#
+@movie_router.get("/list")
+async def list_movies():
+    data = get_json(
+        "/discover/movie", "?sort_by=vote_count.desc"
+    )
+    results = data['results']
+    filtro = []
+    for movie in results:
+        filtro.append({
+            "title": movie['original_title'], 
+            "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
+            "description": movie['overview'],
+        })
+    return filtro
+
+# ===========================================
+#              User Features
+#
+
+## CRIAR USER
 
 @user_router.post('/create', response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 def user_create(user_input : UserCreateInput):
@@ -15,6 +41,8 @@ def user_create(user_input : UserCreateInput):
     except Exception as error:
         raise HTTPException(400, detail=str(error))
     
+## DELETAR USER
+    
 @user_router.delete('/delete/{user_id}', response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 def user_delete(user_id: int):
     try:
@@ -22,6 +50,8 @@ def user_delete(user_id: int):
         return StandardOutput(message='Ok')
     except Exception as error:
         raise HTTPException(400, detail=str(error))
+    
+## ADD FAVORITO
     
 @user_router.post('/favorite/add', response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 def user_favorite_add(favorite_add: UserFavoriteAddInput):
@@ -31,6 +61,8 @@ def user_favorite_add(favorite_add: UserFavoriteAddInput):
     except Exception as error:
         raise HTTPException(400, detail=str(error))
     
+## DELETA FAVORITO
+    
 @user_router.delete('/favorite/remove/{user_id}', response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 def user_favorite_remove(user_id: int, title: str):
     try:
@@ -38,6 +70,8 @@ def user_favorite_remove(user_id: int, title: str):
         return StandardOutput(message='Ok')
     except Exception as error:
         raise HTTPException(400, detail=str(error))
+    
+## LISTA USUARIOS
 
 @user_router.get('/list', response_model=List[UserListOutput], responses={400: {'model': ErrorOutput}})
 def user_list():
