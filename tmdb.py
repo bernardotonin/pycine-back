@@ -12,3 +12,9 @@ def get_json(endpoint, params=None):
     return response.json()
 
 
+def get_actor(user_id : int):
+    url = f"https://api.themoviedb.org/3/person/{user_id}?api_key={api_key}"
+    response = requests.get(url)
+    return response.json()
+
+
