@@ -1,6 +1,6 @@
 # PyCine Backend
 
-Pycine is a fictional app for learning API Concepts, it has a list of movies, users, and favorite movies. This project is part of the IFPR's Web Development IV Class.
+Pycine is a fictional app for learning API Concepts, it has a list of movies, users, and favorite movies. This project is part of the IFPR's Web Development IV Class. This is the back-end of the application, for the front-end go to: **[Pycine-front](https://github.com/bernardotonin/pycine-front)**
 
 
 ## Technologies Used
