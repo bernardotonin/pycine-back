@@ -19,6 +19,11 @@ class UserService:
             result = session.execute(select(User))
             return result.scalars().all()
         
+    def list_user_by_id(user_id: int):
+        with SessionLocal() as session:
+            result = session.execute(select(User).where(User.id==user_id))
+            return result.scalars().first();
+        
 class FavoriteService:
     def add_favorite(user_id: int, title: str, description: str, bannerUrl: str):
         with SessionLocal() as session:

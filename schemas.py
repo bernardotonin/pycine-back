@@ -21,7 +21,7 @@ class Favorite(BaseModel):
     class Config:
         orm_mode = True
 
-class UserListOutput(BaseModel):
+class UserOutput(BaseModel):
     id: int
     email: str
     password: str

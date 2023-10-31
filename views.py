@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from services import UserService, FavoriteService
-from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserListOutput
+from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput
 from typing import List
 
 from tmdb import get_json, get_actor
@@ -12,6 +12,8 @@ movie_router = APIRouter(prefix='/movie')
 # ===========================================
 #              Movie Features
 #
+
+# LISTA TODOS OS FILMES
 @movie_router.get("/list")
 async def list_movies():
     data = get_json(
@@ -26,6 +28,8 @@ async def list_movies():
             "description": movie['overview'],
         })
     return filtro
+
+# LISTA ATOR POR ID
 
 @movie_router.get("/actor/{actor_id}")
 async def list_actor(actor_id: int):
@@ -84,9 +88,18 @@ def user_favorite_remove(user_id: int, title: str):
     
 ## LISTA USUARIOS
 
-@user_router.get('/list', response_model=List[UserListOutput], responses={400: {'model': ErrorOutput}})
+@user_router.get('/list', response_model=List[UserOutput], responses={400: {'model': ErrorOutput}})
 def user_list():
     try:
         return UserService.list_users()
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
+    
+## LISTA USUARIO POR ID
+    
+@user_router.get('/list/{user_id}', response_model=UserOutput, responses={400: {'model': ErrorOutput}})
+def user_list_by_id(user_id : int):
+    try:
+        return UserService.list_user_by_id(user_id)
     except Exception as error:
         raise HTTPException(400, detail=str(error))
