@@ -46,7 +46,7 @@ python3 -m pipenv install
 uvicorn main:app --port 8080
  ```
 
-7. Setup front-end Server: **[Pycine-front](https://pipenv.pypa.io/en/latest/)**
+7. Setup front-end Server: **[Pycine-front](https://github.com/bernardotonin/pycine-front)**
 
 ## Special Thanks
 
