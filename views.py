@@ -3,7 +3,7 @@ from services import UserService, FavoriteService
 from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserListOutput
 from typing import List
 
-from tmdb import get_json
+from tmdb import get_json, get_actor
 
 
 user_router = APIRouter(prefix='/user')
@@ -27,6 +27,17 @@ async def list_movies():
         })
     return filtro
 
+@movie_router.get("/actor/{actor_id}")
+async def list_actor(actor_id: int):
+    data = get_actor(actor_id)
+    result = {
+        "name": data['name'],
+        "bio": data['biography'],
+        "known_for": data['known_for_department'],
+        "birthday": data['birthday'],
+        "placeofbirth": data['place_of_birth']
+    }
+    return result
 # ===========================================
 #              User Features
 #
