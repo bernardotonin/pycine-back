@@ -39,7 +39,7 @@ Select the Pipenv Enviroment.
  ```
 python3 -m pipenv install
  ```
-> **_Note:_** If you are encountering the error:  python3: can't open file '.../pycine-back/pipenv': [Errno 2] No such file or directory. Re-do step 2 in the current pipenv enviroment.
+> **_Note:_** If you are encountering the error:  python3: can't open file '.../pycine-back/pipenv': [Errno 2] No such file or directory. Create a .env file and add the variable PYTHONPATH and set it equal to the absolute path of the project.
 
 6. Run Uvicorn:
 ```
