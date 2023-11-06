@@ -22,26 +22,17 @@ cd pycine-back
  ```
  2. Install pipenv:
  ```
-pip install --user pipenv
+pip install pipenv
  ```
  3. Start Virtual Enviroment:
   ```
-python3 -m pipenv shell
+ pipenv shell
  ```
- 4. Select python interpreter (VSCode) :
-
-  ```
-CTRL + P
-> Python: Select Interpreter
-Select the Pipenv Enviroment.
+ 4. Install dependencies:
  ```
- 5. Install dependencies:
+pipenv install
  ```
-python3 -m pipenv install
- ```
-> **_Note:_** If you are encountering the error:  python3: can't open file '.../pycine-back/pipenv': [Errno 2] No such file or directory. Create a .env file and add the variable PYTHONPATH and set it equal to the absolute path of the project.
-
-6. Run Uvicorn:
+5. Run Uvicorn:
 ```
 uvicorn main:app --port 8080
  ```
