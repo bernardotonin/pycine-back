@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from services import UserService, FavoriteService
 from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput
 from typing import List
-
+import requests
 from tmdb import get_json, get_actor
 
 
@@ -13,8 +13,28 @@ movie_router = APIRouter(prefix='/movie')
 #              Movie Features
 #
 
+# LISTA FILME POR NOME
+@movie_router.get("/search", response_model=List[ListMoviesOutput], responses={400: {'model': ErrorOutput}})
+async def list_movies_by_name(query: str):
+    try:
+        data = get_json(
+            "/search/movie", f"?query={query}"
+        )
+        results = data['results']
+        filtro = []
+        for movie in results:
+            filtro.append({
+                "title": movie['original_title'], 
+                "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
+                "description": movie['overview'],
+            })
+        return filtro
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
+
+
 # LISTA TODOS OS FILMES
-@movie_router.get("/list", response_model=ListMoviesOutput, responses={400: {'model': ErrorOutput}})
+@movie_router.get("/list", response_model=List[ListMoviesOutput], responses={400: {'model': ErrorOutput}})
 async def list_movies():
     try:
         data = get_json(
