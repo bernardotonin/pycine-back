@@ -35,3 +35,15 @@ class StandardOutput(BaseModel):
 
 class ErrorOutput(BaseModel):
     details: str
+
+class SearchActorByIdOutput(BaseModel):
+    name: str
+    bio: str
+    known_for: str
+    birthday: str
+    placeofbirth: str
+
+class ListMoviesOutput(BaseModel):
+    title: str
+    image: str
+    description: str
