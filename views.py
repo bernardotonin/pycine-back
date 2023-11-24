@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from services import UserService, FavoriteService
-from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput
+from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput
 from typing import List
-
+import requests
 from tmdb import get_json, get_actor
 
 
@@ -13,35 +13,61 @@ movie_router = APIRouter(prefix='/movie')
 #              Movie Features
 #
 
+# LISTA FILME POR NOME
+@movie_router.get("/search", response_model=List[ListMoviesOutput], responses={400: {'model': ErrorOutput}})
+async def list_movies_by_name(query: str):
+    try:
+        data = get_json(
+            "/search/movie", f"?query={query}"
+        )
+        results = data['results']
+        filtro = []
+        for movie in results:
+            filtro.append({
+                "title": movie['original_title'], 
+                "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
+                "description": movie['overview'],
+            })
+        return filtro
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
+
+
 # LISTA TODOS OS FILMES
-@movie_router.get("/list")
+@movie_router.get("/list", response_model=List[ListMoviesOutput], responses={400: {'model': ErrorOutput}})
 async def list_movies():
-    data = get_json(
-        "/discover/movie", "?sort_by=vote_count.desc"
-    )
-    results = data['results']
-    filtro = []
-    for movie in results:
-        filtro.append({
-            "title": movie['original_title'], 
-            "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
-            "description": movie['overview'],
-        })
-    return filtro
+    try:
+        data = get_json(
+            "/discover/movie", "?sort_by=vote_count.desc"
+        )
+        results = data['results']
+        filtro = []
+        for movie in results:
+            filtro.append({
+                "title": movie['original_title'], 
+                "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
+                "description": movie['overview'],
+            })
+        return filtro
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
 
 # LISTA ATOR POR ID
 
-@movie_router.get("/actor/{actor_id}")
+@movie_router.get("/actor/{actor_id}", response_model=SearchActorByIdOutput, responses={400: {'model': ErrorOutput}})
 async def list_actor(actor_id: int):
-    data = get_actor(actor_id)
-    result = {
-        "name": data['name'],
-        "bio": data['biography'],
-        "known_for": data['known_for_department'],
-        "birthday": data['birthday'],
-        "placeofbirth": data['place_of_birth']
-    }
-    return result
+    try:
+        data = get_actor(actor_id)
+        result = {
+            "name": data['name'],
+            "bio": data['biography'],
+            "known_for": data['known_for_department'],
+            "birthday": data['birthday'],
+            "placeofbirth": data['place_of_birth']
+        }
+        return result
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
 # ===========================================
 #              User Features
 #
