@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from services import UserService, FavoriteService
-from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput
+from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput
 from typing import List
 import requests
 from tmdb import get_json, get_actor
@@ -11,7 +11,30 @@ movie_router = APIRouter(prefix='/movie')
 
 # ===========================================
 #              Movie Features
-#
+
+# LISTA ARTISTA POR NOME
+# /search/person?query=swaz
+
+@movie_router.get("/actor", response_model=List[SearchActorByNameOutput], responses={400: {'model': ErrorOutput}})
+async def list_actor(query: str):
+    try:
+        data = get_json(
+            "/search/person", f"?query={query}"
+        )
+        result = data['results']
+        filtro = []
+        for actor in result:
+            filtro.append({
+                "name": actor['name'],
+                "profile_picture": f"https://image.tmdb.org/t/p/w185{actor['profile_path']}",
+                "known_for": actor['known_for_department'],
+            })
+        return filtro
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
+
+
+
 
 # LISTA FILME POR NOME
 @movie_router.get("/search", response_model=List[ListMoviesOutput], responses={400: {'model': ErrorOutput}})

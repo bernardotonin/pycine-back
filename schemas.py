@@ -43,6 +43,11 @@ class SearchActorByIdOutput(BaseModel):
     birthday: str
     placeofbirth: str
 
+class SearchActorByNameOutput(BaseModel):
+    name: str
+    profile_picture: str
+    known_for: str
+
 class ListMoviesOutput(BaseModel):
     title: str
     image: str
