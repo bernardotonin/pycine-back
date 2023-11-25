@@ -12,6 +12,7 @@ class UserService:
     def delete_user(user_id: int):
         with SessionLocal() as session:
             session.execute(delete(User).where(User.id==user_id))
+            session.execute(delete(Favorite).where(Favorite.user_id == user_id))
             session.commit()
 
     def list_users():
