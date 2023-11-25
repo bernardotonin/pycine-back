@@ -16,7 +16,7 @@ class User(Base):
 class Favorite(Base):
     __tablename__= 'favorite'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tmdb_id = Column(String)
+    tmdb_id = Column(Integer)
     title = Column(String)
     description = Column(String)
     bannerUrl = Column(String)
@@ -27,5 +27,6 @@ class FavoriteActor(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     bio = Column(String)
-    profile = Column(String)
+    profileUrl = Column(String)
+    tmdb_actor_id = Column(Integer)
     user_id = Column(Integer, ForeignKey('user.id'))

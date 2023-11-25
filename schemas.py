@@ -10,6 +10,7 @@ class UserFavoriteAddInput(BaseModel):
     title: str
     description: str
     bannerUrl: str
+    tmdb_id: int
     
 class Favorite(BaseModel):
     id: int
@@ -17,6 +18,18 @@ class Favorite(BaseModel):
     description: str
     bannerUrl: str
     user_id: int
+    tmdb_id: int
+
+    class Config:
+        orm_mode = True
+
+class FavoriteActor(BaseModel):
+    id: int
+    name: str
+    bio: str
+    profileUrl: str
+    user_id: int
+    tmdb_actor_id: int
 
     class Config:
         orm_mode = True
@@ -26,6 +39,7 @@ class UserOutput(BaseModel):
     email: str
     password: str
     favorites: List[Favorite]
+    favorite_actors: List[FavoriteActor]
     
     class Config:
         orm_mode = True
@@ -52,3 +66,4 @@ class ListMoviesOutput(BaseModel):
     title: str
     image: str
     description: str
+    tmdb_id: int
