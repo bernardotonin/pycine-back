@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from services import UserService, FavoriteService
-from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput
+from services import UserService, FavoriteService, FavoriteActorService
+from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput, UserFavoriteActorAddInput
 from typing import List
 import requests
 from tmdb import get_json, get_actor
@@ -12,13 +12,15 @@ movie_router = APIRouter(prefix='/movie')
 # ===========================================
 #              Movie Features
 
-@movie_router.get("/favoritoteste", responses={400: {'model': ErrorOutput}})
-async def list_actor(query: str):
+# FAVORITA ARTISTA
+
+@movie_router.post("/actor/favorite", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
+async def list_actor(favActor_input: UserFavoriteActorAddInput):
     try:
-        return FavoriteService.get_favorites_by_title(query)
+        FavoriteActorService.add_favorite_actor(user_id=favActor_input.user_id, name=favActor_input.name, bio=favActor_input.bio, profileUrl=favActor_input.profileUrl, tmdb_actor_id=favActor_input.tmdb_actor_id)
+        return StandardOutput(message='Ok')
     except Exception as error:
         raise HTTPException(400, detail=str(error))
-
 # LISTA ARTISTA POR NOME
 
 @movie_router.get("/actor", response_model=List[SearchActorByNameOutput], responses={400: {'model': ErrorOutput}})

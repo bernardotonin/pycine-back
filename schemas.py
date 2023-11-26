@@ -11,6 +11,13 @@ class UserFavoriteAddInput(BaseModel):
     description: str
     bannerUrl: str
     tmdb_id: int
+
+class UserFavoriteActorAddInput(BaseModel):
+    name: str
+    bio: str
+    profileUrl: str
+    user_id: int
+    tmdb_actor_id: int
     
 class Favorite(BaseModel):
     id: int
