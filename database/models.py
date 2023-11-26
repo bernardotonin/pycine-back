@@ -10,12 +10,23 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     password = Column(String)
     favorites = relationship('Favorite', backref='user', lazy='subquery')
+    favorite_actors = relationship('FavoriteActor', backref='user', lazy='subquery')
     
 
 class Favorite(Base):
     __tablename__= 'favorite'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    tmdb_id = Column(Integer)
     title = Column(String)
     description = Column(String)
     bannerUrl = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'))
+
+class FavoriteActor(Base):
+    __tablename__= 'favorite_actor'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    bio = Column(String)
+    profileUrl = Column(String)
+    tmdb_actor_id = Column(Integer)
     user_id = Column(Integer, ForeignKey('user.id'))

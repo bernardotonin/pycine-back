@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from services import UserService, FavoriteService
-from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput
+from services import UserService, FavoriteService, FavoriteActorService
+from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput, UserFavoriteActorAddInput
 from typing import List
 import requests
 from tmdb import get_json, get_actor
@@ -12,8 +12,16 @@ movie_router = APIRouter(prefix='/movie')
 # ===========================================
 #              Movie Features
 
+# FAVORITA ARTISTA
+
+@movie_router.post("/actor/favorite", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
+async def list_actor(favActor_input: UserFavoriteActorAddInput):
+    try:
+        FavoriteActorService.add_favorite_actor(user_id=favActor_input.user_id, name=favActor_input.name, bio=favActor_input.bio, profileUrl=favActor_input.profileUrl, tmdb_actor_id=favActor_input.tmdb_actor_id)
+        return StandardOutput(message='Ok')
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
 # LISTA ARTISTA POR NOME
-# /search/person?query=swaz
 
 @movie_router.get("/actor", response_model=List[SearchActorByNameOutput], responses={400: {'model': ErrorOutput}})
 async def list_actor(query: str):
@@ -28,12 +36,11 @@ async def list_actor(query: str):
                 "name": actor['name'],
                 "profile_picture": f"https://image.tmdb.org/t/p/w185{actor['profile_path']}",
                 "known_for": actor['known_for_department'],
+                "tmdb_actor_id": actor['id']
             })
         return filtro
     except Exception as error:
         raise HTTPException(400, detail=str(error))
-
-
 
 
 # LISTA FILME POR NOME
@@ -70,6 +77,7 @@ async def list_movies():
                 "title": movie['original_title'], 
                 "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
                 "description": movie['overview'],
+                "tmdb_id": movie['id']
             })
         return filtro
     except Exception as error:
@@ -120,7 +128,7 @@ def user_delete(user_id: int):
 @user_router.post('/favorite/add', response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 def user_favorite_add(favorite_add: UserFavoriteAddInput):
     try:
-        FavoriteService.add_favorite(user_id=favorite_add.user_id, title=favorite_add.title, description=favorite_add.description, bannerUrl=favorite_add.bannerUrl)
+        FavoriteService.add_favorite(user_id=favorite_add.user_id, title=favorite_add.title, description=favorite_add.description, bannerUrl=favorite_add.bannerUrl, tmdb_id=favorite_add.tmdb_id)
         return StandardOutput(message='Ok')
     except Exception as error:
         raise HTTPException(400, detail=str(error))
