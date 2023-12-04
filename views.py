@@ -12,8 +12,9 @@ movie_router = APIRouter(prefix='/movie')
 #              Movie Features
 
 
+
 # DELETA FAVORITO ARTISTA
-@movie_router.post("/actor/favorite/remove/{user_id}", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
+@movie_router.delete("/actor/favorite/remove/{user_id}", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
 async def remove_favorite_actor(user_id : int, name: str):
     try:
         FavoriteActorService.remove_favorite(user_id=user_id, name=name)
