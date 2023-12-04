@@ -45,7 +45,8 @@ def actorByNameFilter(results):
             "name": actor['name'],
             "profile_picture": f"https://image.tmdb.org/t/p/w185{actor['profile_path']}",
             "known_for": actor['known_for_department'],
-            "tmdb_actor_id": actor['id']
+            "tmdb_actor_id": actor['id'],
+            "popularity": actor['popularity']
         })
     return filtro
 

@@ -69,6 +69,7 @@ class SearchActorByNameOutput(BaseModel):
     profile_picture: str
     known_for: str
     tmdb_actor_id: int
+    popularity: float
 
 class ListMoviesOutput(BaseModel):
     title: str
