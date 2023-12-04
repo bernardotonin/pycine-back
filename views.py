@@ -2,8 +2,7 @@ from fastapi import APIRouter, HTTPException
 from services import UserService, FavoriteService, FavoriteActorService
 from schemas import UserCreateInput, UserFavoriteAddInput, StandardOutput, ErrorOutput, UserOutput, SearchActorByIdOutput, ListMoviesOutput, SearchActorByNameOutput, UserFavoriteActorAddInput
 from typing import List
-import requests
-from tmdb import get_json, get_actor
+from tmdb import get_json, get_actor, movieFilter, actorByIdFilter, actorByNameFilter
 
 
 user_router = APIRouter(prefix='/user')
@@ -12,10 +11,20 @@ movie_router = APIRouter(prefix='/movie')
 # ===========================================
 #              Movie Features
 
+
+# DELETA FAVORITO ARTISTA
+@movie_router.post("/actor/favorite/remove/{user_id}", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
+async def remove_favorite_actor(user_id : int, name: str):
+    try:
+        FavoriteActorService.remove_favorite(user_id=user_id, name=name)
+        return StandardOutput(message='Ok')
+    except Exception as error:
+        raise HTTPException(400, detail=str(error))
+
 # FAVORITA ARTISTA
 
-@movie_router.post("/actor/favorite", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
-async def list_actor(favActor_input: UserFavoriteActorAddInput):
+@movie_router.post("/actor/favorite/add", response_model=StandardOutput, responses={400: {'model': ErrorOutput}})
+async def add_favorite_actor(favActor_input: UserFavoriteActorAddInput):
     try:
         FavoriteActorService.add_favorite_actor(user_id=favActor_input.user_id, name=favActor_input.name, bio=favActor_input.bio, profileUrl=favActor_input.profileUrl, tmdb_actor_id=favActor_input.tmdb_actor_id)
         return StandardOutput(message='Ok')
@@ -29,16 +38,7 @@ async def list_actor(query: str):
         data = get_json(
             "/search/person", f"?query={query}"
         )
-        result = data['results']
-        filtro = []
-        for actor in result:
-            filtro.append({
-                "name": actor['name'],
-                "profile_picture": f"https://image.tmdb.org/t/p/w185{actor['profile_path']}",
-                "known_for": actor['known_for_department'],
-                "tmdb_actor_id": actor['id']
-            })
-        return filtro
+        return actorByNameFilter(data['results'])
     except Exception as error:
         raise HTTPException(400, detail=str(error))
 
@@ -50,15 +50,7 @@ async def list_movies_by_name(query: str):
         data = get_json(
             "/search/movie", f"?query={query}"
         )
-        results = data['results']
-        filtro = []
-        for movie in results:
-            filtro.append({
-                "title": movie['original_title'], 
-                "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
-                "description": movie['overview'],
-            })
-        return filtro
+        return movieFilter(data['results'])
     except Exception as error:
         raise HTTPException(400, detail=str(error))
 
@@ -70,16 +62,7 @@ async def list_movies():
         data = get_json(
             "/discover/movie", "?sort_by=vote_count.desc"
         )
-        results = data['results']
-        filtro = []
-        for movie in results:
-            filtro.append({
-                "title": movie['original_title'], 
-                "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
-                "description": movie['overview'],
-                "tmdb_id": movie['id']
-            })
-        return filtro
+        return movieFilter(data['results'])
     except Exception as error:
         raise HTTPException(400, detail=str(error))
 
@@ -89,14 +72,7 @@ async def list_movies():
 async def list_actor(actor_id: int):
     try:
         data = get_actor(actor_id)
-        result = {
-            "name": data['name'],
-            "bio": data['biography'],
-            "known_for": data['known_for_department'],
-            "birthday": data['birthday'],
-            "placeofbirth": data['place_of_birth']
-        }
-        return result
+        return actorByIdFilter(data)
     except Exception as error:
         raise HTTPException(400, detail=str(error))
 # ===========================================
