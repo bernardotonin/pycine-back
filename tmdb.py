@@ -17,4 +17,35 @@ def get_actor(user_id : int):
     response = requests.get(url)
     return response.json()
 
+def movieFilter(results):
+    filtro = []
+    for movie in results:
+        filtro.append({
+            "title": movie['original_title'], 
+            "image": f"https://image.tmdb.org/t/p/w185{movie['poster_path']}",
+            "description": movie['overview'],
+            "tmdb_id": movie['id']
+        })
+    return filtro
+
+def actorByIdFilter(data):
+    result = {
+            "name": data['name'],
+            "bio": data['biography'],
+            "known_for": data['known_for_department'],
+            "birthday": data['birthday'],
+            "placeofbirth": data['place_of_birth']
+    }
+    return result
+
+def actorByNameFilter(results):
+    filtro = []
+    for actor in results:
+        filtro.append({
+            "name": actor['name'],
+            "profile_picture": f"https://image.tmdb.org/t/p/w185{actor['profile_path']}",
+            "known_for": actor['known_for_department'],
+            "tmdb_actor_id": actor['id']
+        })
+    return filtro
 
